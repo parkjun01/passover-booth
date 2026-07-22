@@ -186,7 +186,7 @@
 
   <div class="qr-modal" id="qrModal">
     <div class="qr-modal-inner">
-      <canvas id="qrModalCanvas"></canvas>
+      <img id="qrModalImg" src="" alt="QR Code" style="width:320px;height:320px;display:block;">
       <div class="qr-modal-url">https://passover-booth.vercel.app</div>
       <button class="qr-modal-close" id="qrModalClose">닫기</button>
     </div>
@@ -504,8 +504,9 @@ buildJump();
 render();
 
 const APP_URL = 'https://passover-booth.vercel.app';
-QRCode.toCanvas(document.getElementById('qrCanvas'), APP_URL, { width: 200, margin: 1 });
-QRCode.toCanvas(document.getElementById('qrModalCanvas'), APP_URL, { width: 320, margin: 1 });
+QRCode.toDataURL(APP_URL, { width: 320, margin: 1 }, function(err, url) {
+  if (!err) document.getElementById('qrModalImg').src = url;
+});
 
 document.getElementById('qrBox').addEventListener('click', () => {
   document.getElementById('qrModal').classList.add('show');
