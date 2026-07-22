@@ -180,12 +180,8 @@
     </div>
   </div>
 
-  <div class="qrpanel" id="qrPanel">
-    <div class="qrbox" id="qrBox" title="클릭하면 크게 볼 수 있어요">
-      <canvas id="qrCanvas"></canvas>
-    </div>
-    <div class="qrcaption">스캔하면 이 프로그램이 열려요 · 클릭하면 크게 보기</div>
-    <div class="qrurl" id="qrUrl">https://passover-booth.vercel.app</div>
+  <div style="display:none">
+    <canvas id="qrCanvas"></canvas>
   </div>
 
   <div class="qr-modal" id="qrModal">
@@ -501,9 +497,7 @@ listToggle.addEventListener('click', () => {
 });
 
 qrToggle.addEventListener('click', () => {
-  const show = !qrPanel.classList.contains('show');
-  qrPanel.classList.toggle('show', show);
-  qrToggle.classList.toggle('active', show);
+  document.getElementById('qrModal').classList.add('show');
 });
 
 buildJump();
