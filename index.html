@@ -1,0 +1,496 @@
+<title>유월절 부스 리허설 카드 (최종판)</title>
+<style>
+  :root{
+    --bg:#f4f1ea; --bg2:#ffffff; --ink:#20202a; --sub:#6b6a63;
+    --line:rgba(32,32,42,.12);
+    --gold:#a97a1f; --gold-soft:#f2e2b8;
+    --wine:#7c2632; --wine-soft:#f3dadd;
+    --slate:#2f4858; --slate-soft:#dbe6ea;
+    --card-shadow: 0 1px 2px rgba(20,18,10,.06), 0 18px 40px -22px rgba(20,18,10,.35);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14131c; --bg2:#1c1b28; --ink:#eeeadf; --sub:#a39d8c;
+      --line:rgba(238,234,223,.14);
+      --gold:#e0b355; --gold-soft:#3a3018;
+      --wine:#e08b93; --wine-soft:#3a2027;
+      --slate:#9fc2d6; --slate-soft:#20313c;
+      --card-shadow: 0 1px 2px rgba(0,0,0,.4), 0 24px 50px -20px rgba(0,0,0,.6);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14131c; --bg2:#1c1b28; --ink:#eeeadf; --sub:#a39d8c;
+    --line:rgba(238,234,223,.14);
+    --gold:#e0b355; --gold-soft:#3a3018;
+    --wine:#e08b93; --wine-soft:#3a2027;
+    --slate:#9fc2d6; --slate-soft:#20313c;
+    --card-shadow: 0 1px 2px rgba(0,0,0,.4), 0 24px 50px -20px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+  :root[data-theme="light"]{
+    --bg:#f4f1ea; --bg2:#ffffff; --ink:#20202a; --sub:#6b6a63;
+    --line:rgba(32,32,42,.12);
+    --gold:#a97a1f; --gold-soft:#f2e2b8;
+    --wine:#7c2632; --wine-soft:#f3dadd;
+    --slate:#2f4858; --slate-soft:#dbe6ea;
+    --card-shadow: 0 1px 2px rgba(20,18,10,.06), 0 18px 40px -22px rgba(20,18,10,.35);
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh; background:var(--bg); color:var(--ink);
+    font-family: "Malgun Gothic","Apple SD Gothic Neo",-apple-system,"Segoe UI",sans-serif;
+    display:flex; justify-content:center; padding:28px 16px 48px;
+  }
+  .stage{ width:100%; max-width:640px; display:flex; flex-direction:column; gap:16px; }
+
+  .top{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .title{
+    font-family:Georgia,"Iowan Old Style","Nanum Myeongjo",serif;
+    font-size:21px; letter-spacing:.01em; margin:0;
+  }
+  .title small{ display:block; font-family:inherit; font-size:12px; color:var(--sub); font-weight:400; margin-top:2px; letter-spacing:.04em;}
+  .topbtns{ display:flex; gap:8px; flex-shrink:0; }
+  .modebtn{
+    border:1px solid var(--line); background:var(--bg2); color:var(--ink);
+    border-radius:999px; padding:7px 13px; font-size:12.5px; cursor:pointer;
+  }
+  .modebtn:hover{ border-color:var(--gold); }
+  .modebtn.active{ border-color:var(--wine); color:var(--wine); }
+
+  .qrpanel{
+    display:none; flex-direction:column; align-items:center; gap:8px;
+    background:var(--bg2); border:1px solid var(--line); border-radius:16px;
+    padding:18px; box-shadow:var(--card-shadow);
+  }
+  .qrpanel.show{ display:flex; }
+  .qrbox{ background:#fff; padding:10px; border-radius:10px; }
+  .qrbox svg{ width:160px; height:160px; display:block; }
+  .qrcaption{ font-size:12.5px; color:var(--sub); }
+  .qrurl{ font-size:11px; color:var(--sub); word-break:break-all; text-align:center; max-width:260px; }
+
+  .scenebar{ display:flex; gap:5px; }
+  .scenebar .seg{ flex:1; height:4px; border-radius:2px; background:var(--line); }
+  .scenebar .seg.done{ background:var(--gold); }
+  .scenebar .seg.now{ background:var(--wine); }
+
+  .counter{ display:flex; justify-content:space-between; font-size:12px; color:var(--sub); font-variant-numeric: tabular-nums; letter-spacing:.02em;}
+
+  .card{
+    background:var(--bg2); border:1px solid var(--line); border-radius:18px;
+    padding:26px 24px 22px; box-shadow:var(--card-shadow);
+    display:flex; flex-direction:column; gap:14px; min-height:260px;
+  }
+  .badgerow{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .badge{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:12px; font-weight:700; letter-spacing:.03em; padding:5px 11px 5px 9px;
+    border-radius:999px;
+  }
+  .badge.상황{ background:var(--gold-soft); color:var(--gold); }
+  .badge.질문{ background:var(--wine-soft); color:var(--wine); }
+  .badge.정답{ background:var(--slate-soft); color:var(--slate); }
+  .badge.지문{ background:var(--line); color:var(--sub); }
+  .badge::before{ content:""; width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .speaker{ font-size:11.5px; color:var(--sub); font-weight:600; }
+  .scenetag{ font-size:12px; color:var(--sub); font-weight:600; }
+
+  .en{ font-family:Georgia,"Iowan Old Style",serif; font-size:18px; line-height:1.55; white-space:pre-line; }
+  .kr{ font-size:15.5px; line-height:1.65; color:var(--ink); white-space:pre-line; }
+  .en.action, .kr.action{ font-style:italic; color:var(--sub); text-align:center; }
+  .kr.hidden, .en.hidden{ filter: blur(7px); user-select:none; cursor:pointer; opacity:.7; }
+  .hint{ font-size:11.5px; color:var(--sub); }
+
+  .picker{ display:none; align-items:center; gap:12px; margin-top:2px; padding-top:14px; border-top:1px dashed var(--line); flex-wrap:wrap; }
+  .picker-label{ font-size:12.5px; color:var(--sub); font-weight:600; }
+  .picker-row{ display:flex; gap:8px; }
+  .num-chip{
+    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--line); background:var(--bg); color:var(--sub); font-weight:700; font-size:15px;
+    font-variant-numeric: tabular-nums; transition: background .1s, color .1s, transform .1s;
+  }
+  .num-chip.active{ background:var(--wine); border-color:var(--wine); color:#fff; transform:scale(1.12); }
+  .pickbtn{
+    margin-left:auto; border:1px solid var(--gold); background:var(--gold-soft); color:var(--gold);
+    border-radius:999px; padding:7px 14px; font-size:12.5px; font-weight:700; cursor:pointer;
+  }
+  .pickbtn:hover{ filter:brightness(1.05); }
+  .pickhint{ flex-basis:100%; font-size:11px; color:var(--sub); }
+
+  .teamsize{ display:flex; align-items:center; gap:8px; }
+  .teamsize-label{ font-size:12px; color:var(--sub); font-weight:600; }
+  .sizebtn{
+    border:1px solid var(--line); background:var(--bg2); color:var(--sub);
+    border-radius:8px; padding:6px 12px; font-size:12.5px; cursor:pointer; font-weight:600;
+  }
+  .sizebtn.active{ border-color:var(--wine); color:var(--wine); background:var(--wine-soft); }
+  .sizebtn:hover{ border-color:var(--gold); }
+
+  .nav{ display:flex; align-items:center; gap:10px; }
+  .navbtn{
+    flex:1; padding:13px 14px; border-radius:12px; border:1px solid var(--line);
+    background:var(--bg2); color:var(--ink); font-size:14.5px; cursor:pointer; font-weight:600;
+  }
+  .navbtn.primary{ background:var(--wine); border-color:var(--wine); color:#fff; }
+  .navbtn:disabled{ opacity:.35; cursor:default; }
+  .navbtn:hover:not(:disabled){ border-color:var(--gold); }
+  .navbtn.primary:hover:not(:disabled){ filter:brightness(1.08); }
+
+  .jump{ display:flex; flex-wrap:wrap; gap:6px; }
+  .jump button{
+    border:1px solid var(--line); background:var(--bg2); color:var(--sub);
+    border-radius:8px; padding:6px 10px; font-size:12px; cursor:pointer;
+  }
+  .jump button.active{ border-color:var(--wine); color:var(--wine); font-weight:700; }
+  .jump button:hover{ border-color:var(--gold); color:var(--ink); }
+
+  .listwrap{ display:none; flex-direction:column; gap:10px; }
+  .listwrap.show{ display:flex; }
+  .stage.list .card, .stage.list .nav, .stage.list .scenebar, .stage.list .counter{ display:none; }
+  .row{ background:var(--bg2); border:1px solid var(--line); border-radius:12px; padding:14px 16px; display:flex; flex-direction:column; gap:6px; }
+  .row .en{ font-size:14.5px; }
+  .row .kr{ font-size:13.5px; color:var(--sub); }
+  .row .meta{ display:flex; gap:8px; align-items:center; }
+  .row .n{ font-size:11px; color:var(--sub); }
+
+  footer{ text-align:center; font-size:11.5px; color:var(--sub); padding-top:4px; }
+
+  @media (prefers-reduced-motion: no-preference){
+    .card{ animation: rise .25s ease; }
+    @keyframes rise{ from{ opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+  }
+</style>
+
+<div class="stage" id="stage">
+  <div class="top">
+    <h1 class="title">유월절 부스 리허설<small>예수님(진행자) → 제자(체험팀) · 5문항</small></h1>
+    <div class="topbtns">
+      <button class="modebtn" id="qrToggle">QR 코드</button>
+      <button class="modebtn" id="listToggle">전체 대본</button>
+    </div>
+  </div>
+
+  <div class="qrpanel" id="qrPanel">
+    <div class="qrbox">
+      <svg viewBox="0 0 41 41" xmlns="http://www.w3.org/2000/svg"><path d="M2,2H3V3H2zM3,2H4V3H3zM4,2H5V3H4zM5,2H6V3H5zM6,2H7V3H6zM7,2H8V3H7zM8,2H9V3H8zM12,2H13V3H12zM14,2H15V3H14zM15,2H16V3H15zM16,2H17V3H16zM23,2H24V3H23zM25,2H26V3H25zM30,2H31V3H30zM32,2H33V3H32zM33,2H34V3H33zM34,2H35V3H34zM35,2H36V3H35zM36,2H37V3H36zM37,2H38V3H37zM38,2H39V3H38zM2,3H3V4H2zM8,3H9V4H8zM11,3H12V4H11zM12,3H13V4H12zM17,3H18V4H17zM18,3H19V4H18zM19,3H20V4H19zM20,3H21V4H20zM22,3H23V4H22zM29,3H30V4H29zM30,3H31V4H30zM32,3H33V4H32zM38,3H39V4H38zM2,4H3V5H2zM4,4H5V5H4zM5,4H6V5H5zM6,4H7V5H6zM8,4H9V5H8zM10,4H11V5H10zM11,4H12V5H11zM12,4H13V5H12zM14,4H15V5H14zM16,4H17V5H16zM18,4H19V5H18zM23,4H24V5H23zM26,4H27V5H26zM28,4H29V5H28zM29,4H30V5H29zM32,4H33V5H32zM34,4H35V5H34zM35,4H36V5H35zM36,4H37V5H36zM38,4H39V5H38zM2,5H3V6H2zM4,5H5V6H4zM5,5H6V6H5zM6,5H7V6H6zM8,5H9V6H8zM10,5H11V6H10zM13,5H14V6H13zM17,5H18V6H17zM19,5H20V6H19zM24,5H25V6H24zM27,5H28V6H27zM28,5H29V6H28zM29,5H30V6H29zM32,5H33V6H32zM34,5H35V6H34zM35,5H36V6H35zM36,5H37V6H36zM38,5H39V6H38zM2,6H3V7H2zM4,6H5V7H4zM5,6H6V7H5zM6,6H7V7H6zM8,6H9V7H8zM10,6H11V7H10zM11,6H12V7H11zM14,6H15V7H14zM15,6H16V7H15zM16,6H17V7H16zM17,6H18V7H17zM19,6H20V7H19zM20,6H21V7H20zM21,6H22V7H21zM22,6H23V7H22zM23,6H24V7H23zM24,6H25V7H24zM25,6H26V7H25zM30,6H31V7H30zM32,6H33V7H32zM34,6H35V7H34zM35,6H36V7H35zM36,6H37V7H36zM38,6H39V7H38zM2,7H3V8H2zM8,7H9V8H8zM10,7H11V8H10zM11,7H12V8H11zM14,7H15V8H14zM16,7H17V8H16zM17,7H18V8H17zM18,7H19V8H18zM19,7H20V8H19zM23,7H24V8H23zM27,7H28V8H27zM29,7H30V8H29zM32,7H33V8H32zM38,7H39V8H38zM2,8H3V9H2zM3,8H4V9H3zM4,8H5V9H4zM5,8H6V9H5zM6,8H7V9H6zM7,8H8V9H7zM8,8H9V9H8zM10,8H11V9H10zM12,8H13V9H12zM14,8H15V9H14zM16,8H17V9H16zM18,8H19V9H18zM20,8H21V9H20zM22,8H23V9H22zM24,8H25V9H24zM26,8H27V9H26zM28,8H29V9H28zM30,8H31V9H30zM32,8H33V9H32zM33,8H34V9H33zM34,8H35V9H34zM35,8H36V9H35zM36,8H37V9H36zM37,8H38V9H37zM38,8H39V9H38zM10,9H11V10H10zM11,9H12V10H11zM13,9H14V10H13zM15,9H16V10H15zM19,9H20V10H19zM20,9H21V10H20zM22,9H23V10H22zM23,9H24V10H23zM24,9H25V10H24zM26,9H27V10H26zM30,9H31V10H30zM2,10H3V11H2zM4,10H5V11H4zM5,10H6V11H5zM6,10H7V11H6zM7,10H8V11H7zM8,10H9V11H8zM14,10H15V11H14zM16,10H17V11H16zM18,10H19V11H18zM23,10H24V11H23zM26,10H27V11H26zM27,10H28V11H27zM32,10H33V11H32zM33,10H34V11H33zM34,10H35V11H34zM35,10H36V11H35zM36,10H37V11H36zM3,11H4V12H3zM4,11H5V12H4zM6,11H7V12H6zM7,11H8V12H7zM10,11H11V12H10zM13,11H14V12H13zM14,11H15V12H14zM17,11H18V12H17zM20,11H21V12H20zM22,11H23V12H22zM23,11H24V12H23zM25,11H26V12H25zM27,11H28V12H27zM28,11H29V12H28zM30,11H31V12H30zM33,11H34V12H33zM35,11H36V12H35zM37,11H38V12H37zM2,12H3V13H2zM7,12H8V13H7zM8,12H9V13H8zM9,12H10V13H9zM10,12H11V13H10zM12,12H13V13H12zM13,12H14V13H13zM17,12H18V13H17zM18,12H19V13H18zM20,12H21V13H20zM21,12H22V13H21zM23,12H24V13H23zM24,12H25V13H24zM29,12H30V13H29zM30,12H31V13H30zM32,12H33V13H32zM33,12H34V13H33zM35,12H36V13H35zM37,12H38V13H37zM38,12H39V13H38zM2,13H3V14H2zM3,13H4V14H3zM4,13H5V14H4zM5,13H6V14H5zM7,13H8V14H7zM11,13H12V14H11zM14,13H15V14H14zM15,13H16V14H15zM16,13H17V14H16zM17,13H18V14H17zM21,13H22V14H21zM22,13H23V14H22zM23,13H24V14H23zM26,13H27V14H26zM28,13H29V14H28zM31,13H32V14H31zM33,13H34V14H33zM34,13H35V14H34zM35,13H36V14H35zM38,13H39V14H38zM2,14H3V15H2zM5,14H6V15H5zM6,14H7V15H6zM7,14H8V15H7zM8,14H9V15H8zM9,14H10V15H9zM10,14H11V15H10zM13,14H14V15H13zM14,14H15V15H14zM16,14H17V15H16zM17,14H18V15H17zM19,14H20V15H19zM21,14H22V15H21zM24,14H25V15H24zM26,14H27V15H26zM27,14H28V15H27zM29,14H30V15H29zM31,14H32V15H31zM32,14H33V15H32zM34,14H35V15H34zM35,14H36V15H35zM36,14H37V15H36zM37,14H38V15H37zM38,14H39V15H38zM3,15H4V16H3zM4,15H5V16H4zM5,15H6V16H5zM6,15H7V16H6zM9,15H10V16H9zM10,15H11V16H10zM12,15H13V16H12zM16,15H17V16H16zM18,15H19V16H18zM20,15H21V16H20zM21,15H22V16H21zM22,15H23V16H22zM25,15H26V16H25zM27,15H28V16H27zM33,15H34V16H33zM37,15H38V16H37zM4,16H5V17H4zM6,16H7V17H6zM7,16H8V17H7zM8,16H9V17H8zM9,16H10V17H9zM10,16H11V17H10zM11,16H12V17H11zM13,16H14V17H13zM17,16H18V17H17zM18,16H19V17H18zM20,16H21V17H20zM22,16H23V17H22zM24,16H25V17H24zM29,16H30V17H29zM30,16H31V17H30zM32,16H33V17H32zM33,16H34V17H33zM34,16H35V17H34zM35,16H36V17H35zM38,16H39V17H38zM2,17H3V18H2zM3,17H4V18H3zM7,17H8V18H7zM11,17H12V18H11zM14,17H15V18H14zM15,17H16V18H15zM16,17H17V18H16zM17,17H18V18H17zM18,17H19V18H18zM21,17H22V18H21zM22,17H23V18H22zM25,17H26V18H25zM28,17H29V18H28zM29,17H30V18H29zM30,17H31V18H30zM33,17H34V18H33zM34,17H35V18H34zM37,17H38V18H37zM38,17H39V18H38zM3,18H4V19H3zM6,18H7V19H6zM8,18H9V19H8zM14,18H15V19H14zM16,18H17V19H16zM20,18H21V19H20zM21,18H22V19H21zM22,18H23V19H22zM23,18H24V19H23zM24,18H25V19H24zM25,18H26V19H25zM27,18H28V19H27zM29,18H30V19H29zM32,18H33V19H32zM34,18H35V19H34zM36,18H37V19H36zM37,18H38V19H37zM38,18H39V19H38zM5,19H6V20H5zM9,19H10V20H9zM10,19H11V20H10zM11,19H12V20H11zM14,19H15V20H14zM16,19H17V20H16zM17,19H18V20H17zM18,19H19V20H18zM25,19H26V20H25zM26,19H27V20H26zM27,19H28V20H27zM28,19H29V20H28zM30,19H31V20H30zM31,19H32V20H31zM36,19H37V20H36zM37,19H38V20H37zM2,20H3V21H2zM5,20H6V21H5zM6,20H7V21H6zM8,20H9V21H8zM9,20H10V21H9zM10,20H11V21H10zM11,20H12V21H11zM12,20H13V21H12zM13,20H14V21H13zM14,20H15V21H14zM15,20H16V21H15zM16,20H17V21H16zM20,20H21V21H20zM22,20H23V21H22zM23,20H24V21H23zM26,20H27V21H26zM27,20H28V21H27zM28,20H29V21H28zM29,20H30V21H29zM30,20H31V21H30zM31,20H32V21H31zM34,20H35V21H34zM37,20H38V21H37zM38,20H39V21H38zM4,21H5V22H4zM6,21H7V22H6zM7,21H8V22H7zM11,21H12V22H11zM13,21H14V22H13zM14,21H15V22H14zM16,21H17V22H16zM18,21H19V22H18zM23,21H24V22H23zM24,21H25V22H24zM26,21H27V22H26zM28,21H29V22H28zM29,21H30V22H29zM30,21H31V22H30zM32,21H33V22H32zM33,21H34V22H33zM35,21H36V22H35zM38,21H39V22H38zM2,22H3V23H2zM3,22H4V23H3zM6,22H7V23H6zM8,22H9V23H8zM10,22H11V23H10zM11,22H12V23H11zM16,22H17V23H16zM19,22H20V23H19zM20,22H21V23H20zM24,22H25V23H24zM26,22H27V23H26zM27,22H28V23H27zM28,22H29V23H28zM31,22H32V23H31zM32,22H33V23H32zM34,22H35V23H34zM36,22H37V23H36zM6,23H7V24H6zM10,23H11V24H10zM11,23H12V24H11zM12,23H13V24H12zM13,23H14V24H13zM14,23H15V24H14zM15,23H16V24H15zM16,23H17V24H16zM19,23H20V24H19zM21,23H22V24H21zM23,23H24V24H23zM25,23H26V24H25zM26,23H27V24H26zM30,23H31V24H30zM35,23H36V24H35zM37,23H38V24H37zM2,24H3V25H2zM3,24H4V25H3zM5,24H6V25H5zM6,24H7V25H6zM8,24H9V25H8zM11,24H12V25H11zM12,24H13V25H12zM17,24H18V25H17zM19,24H20V25H19zM23,24H24V25H23zM29,24H30V25H29zM32,24H33V25H32zM33,24H34V25H33zM34,24H35V25H34zM35,24H36V25H35zM38,24H39V25H38zM2,25H3V26H2zM3,25H4V26H3zM5,25H6V26H5zM7,25H8V26H7zM9,25H10V26H9zM11,25H12V26H11zM15,25H16V26H15zM17,25H18V26H17zM18,25H19V26H18zM19,25H20V26H19zM20,25H21V26H20zM22,25H23V26H22zM23,25H24V26H23zM24,25H25V26H24zM29,25H30V26H29zM30,25H31V26H30zM31,25H32V26H31zM32,25H33V26H32zM33,25H34V26H33zM34,25H35V26H34zM38,25H39V26H38zM4,26H5V27H4zM5,26H6V27H5zM8,26H9V27H8zM9,26H10V27H9zM10,26H11V27H10zM11,26H12V27H11zM12,26H13V27H12zM14,26H15V27H14zM17,26H18V27H17zM18,26H19V27H18zM23,26H24V27H23zM27,26H28V27H27zM29,26H30V27H29zM32,26H33V27H32zM33,26H34V27H33zM34,26H35V27H34zM36,26H37V27H36zM37,26H38V27H37zM38,26H39V27H38zM2,27H3V28H2zM6,27H7V28H6zM10,27H11V28H10zM11,27H12V28H11zM12,27H13V28H12zM13,27H14V28H13zM15,27H16V28H15zM17,27H18V28H17zM20,27H21V28H20zM22,27H23V28H22zM23,27H24V28H23zM24,27H25V28H24zM25,27H26V28H25zM26,27H27V28H26zM28,27H29V28H28zM31,27H32V28H31zM2,28H3V29H2zM5,28H6V29H5zM7,28H8V29H7zM8,28H9V29H8zM9,28H10V29H9zM10,28H11V29H10zM12,28H13V29H12zM13,28H14V29H13zM17,28H18V29H17zM18,28H19V29H18zM19,28H20V29H19zM21,28H22V29H21zM24,28H25V29H24zM26,28H27V29H26zM27,28H28V29H27zM29,28H30V29H29zM30,28H31V29H30zM32,28H33V29H32zM35,28H36V29H35zM37,28H38V29H37zM38,28H39V29H38zM2,29H3V30H2zM4,29H5V30H4zM6,29H7V30H6zM9,29H10V30H9zM10,29H11V30H10zM13,29H14V30H13zM14,29H15V30H14zM15,29H16V30H15zM16,29H17V30H16zM17,29H18V30H17zM20,29H21V30H20zM21,29H22V30H21zM22,29H23V30H22zM23,29H24V30H23zM28,29H29V30H28zM29,29H30V30H29zM30,29H31V30H30zM31,29H32V30H31zM32,29H33V30H32zM34,29H35V30H34zM35,29H36V30H35zM38,29H39V30H38zM2,30H3V31H2zM4,30H5V31H4zM6,30H7V31H6zM7,30H8V31H7zM8,30H9V31H8zM9,30H10V31H9zM10,30H11V31H10zM11,30H12V31H11zM13,30H14V31H13zM15,30H16V31H15zM16,30H17V31H16zM17,30H18V31H17zM18,30H19V31H18zM19,30H20V31H19zM20,30H21V31H20zM21,30H22V31H21zM22,30H23V31H22zM24,30H25V31H24zM26,30H27V31H26zM27,30H28V31H27zM28,30H29V31H28zM29,30H30V31H29zM30,30H31V31H30zM31,30H32V31H31zM32,30H33V31H32zM33,30H34V31H33zM34,30H35V31H34zM36,30H37V31H36zM37,30H38V31H37zM38,30H39V31H38zM10,31H11V32H10zM11,31H12V32H11zM12,31H13V32H12zM21,31H22V32H21zM22,31H23V32H22zM25,31H26V32H25zM27,31H28V32H27zM29,31H30V32H29zM30,31H31V32H30zM34,31H35V32H34zM35,31H36V32H35zM2,32H3V33H2zM3,32H4V33H3zM4,32H5V33H4zM5,32H6V33H5zM6,32H7V33H6zM7,32H8V33H7zM8,32H9V33H8zM11,32H12V33H11zM13,32H14V33H13zM15,32H16V33H15zM16,32H17V33H16zM17,32H18V33H17zM18,32H19V33H18zM20,32H21V33H20zM22,32H23V33H22zM24,32H25V33H24zM26,32H27V33H26zM30,32H31V33H30zM32,32H33V33H32zM34,32H35V33H34zM36,32H37V33H36zM37,32H38V33H37zM38,32H39V33H38zM2,33H3V34H2zM8,33H9V34H8zM10,33H11V34H10zM11,33H12V34H11zM13,33H14V34H13zM14,33H15V34H14zM21,33H22V34H21zM28,33H29V34H28zM30,33H31V34H30zM34,33H35V34H34zM35,33H36V34H35zM38,33H39V34H38zM2,34H3V35H2zM4,34H5V35H4zM5,34H6V35H5zM6,34H7V35H6zM8,34H9V35H8zM10,34H11V35H10zM12,34H13V35H12zM17,34H18V35H17zM20,34H21V35H20zM22,34H23V35H22zM23,34H24V35H23zM24,34H25V35H24zM27,34H28V35H27zM29,34H30V35H29zM30,34H31V35H30zM31,34H32V35H31zM32,34H33V35H32zM33,34H34V35H33zM34,34H35V35H34zM36,34H37V35H36zM37,34H38V35H37zM38,34H39V35H38zM2,35H3V36H2zM4,35H5V36H4zM5,35H6V36H5zM6,35H7V36H6zM8,35H9V36H8zM10,35H11V36H10zM11,35H12V36H11zM13,35H14V36H13zM17,35H18V36H17zM18,35H19V36H18zM23,35H24V36H23zM25,35H26V36H25zM26,35H27V36H26zM27,35H28V36H27zM28,35H29V36H28zM31,35H32V36H31zM32,35H33V36H32zM34,35H35V36H34zM38,35H39V36H38zM2,36H3V37H2zM4,36H5V37H4zM5,36H6V37H5zM6,36H7V37H6zM8,36H9V37H8zM10,36H11V37H10zM12,36H13V37H12zM13,36H14V37H13zM14,36H15V37H14zM15,36H16V37H15zM16,36H17V37H16zM19,36H20V37H19zM20,36H21V37H20zM22,36H23V37H22zM23,36H24V37H23zM26,36H27V37H26zM27,36H28V37H27zM28,36H29V37H28zM31,36H32V37H31zM37,36H38V37H37zM38,36H39V37H38zM2,37H3V38H2zM8,37H9V38H8zM13,37H14V38H13zM14,37H15V38H14zM15,37H16V38H15zM18,37H19V38H18zM20,37H21V38H20zM23,37H24V38H23zM24,37H25V38H24zM25,37H26V38H25zM26,37H27V38H26zM28,37H29V38H28zM29,37H30V38H29zM30,37H31V38H30zM32,37H33V38H32zM34,37H35V38H34zM35,37H36V38H35zM38,37H39V38H38zM2,38H3V39H2zM3,38H4V39H3zM4,38H5V39H4zM5,38H6V39H5zM6,38H7V39H6zM7,38H8V39H7zM8,38H9V39H8zM10,38H11V39H10zM11,38H12V39H11zM13,38H14V39H13zM15,38H16V39H15zM16,38H17V39H16zM19,38H20V39H19zM24,38H25V39H24zM26,38H27V39H26zM27,38H28V39H27zM28,38H29V39H28zM31,38H32V39H31zM34,38H35V39H34zM36,38H37V39H36zM37,38H38V39H37zM38,38H39V39H38z" fill="#000" fill-rule="evenodd"/></svg>
+    </div>
+    <div class="qrcaption">스캔하면 이 프로그램이 열려요</div>
+    <div class="qrurl" id="qrUrl">https://claude.ai/code/artifact/dcaa62c4-dd50-4586-b13e-cab9092401aa</div>
+  </div>
+
+  <div class="teamsize">
+    <span class="teamsize-label">체험팀 인원</span>
+    <button class="sizebtn" data-size="2">2명</button>
+    <button class="sizebtn active" data-size="3">3명</button>
+  </div>
+
+  <div class="scenebar" id="scenebar"></div>
+  <div class="counter"><span id="counterText"></span><span id="sceneText"></span></div>
+
+  <div class="card" id="card">
+    <div class="badgerow"><span class="badge" id="badge"></span><span class="speaker" id="speaker"></span></div>
+    <div class="en" id="enText"></div>
+    <div class="kr" id="krText"></div>
+    <div class="hint" id="hint"></div>
+    <div class="picker" id="picker">
+      <span class="picker-label">누가 답할까요?</span>
+      <div class="picker-row" id="pickerRow">
+        <span class="num-chip" data-n="1">1</span>
+        <span class="num-chip" data-n="2">2</span>
+        <span class="num-chip" data-n="3">3</span>
+      </div>
+      <button class="pickbtn" id="pickBtn">번호 뽑기</button>
+      <span class="pickhint" id="pickHint"></span>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="navbtn" id="prevBtn">← 이전</button>
+    <button class="navbtn" id="quizBtn">정답 가리기</button>
+    <button class="navbtn primary" id="nextBtn">다음 →</button>
+  </div>
+
+  <div class="jump" id="jump"></div>
+
+  <div class="listwrap" id="listwrap"></div>
+
+  <footer>화살표 키로도 이동 · 질문 카드에서 "번호 뽑기"로 답할 팀원(1~3번)을 정할 수 있어요</footer>
+</div>
+
+<script>
+// kind: 상황 | 질문 | 정답 / speaker: 예수님(진행자) | 제자(체험팀)
+const DATA = [
+["도입","상황","예수님(진행자)",null,
+"God bless you. Come and sit down, please. I am playing Jesus, and you are playing my disciples. I will ask you a few questions. If you answer well, you will get a stamp.",
+"복 많이 받으세요. 오셔서 앉아 주세요. 저는 예수님 역할을, 여러분은 제자 역할을 맡았어요. 제가 몇 가지 질문을 할게요. 질문에 잘 대답하면 스탬프를 드릴게요."],
+
+["Q1","질문","예수님(진행자)","Q1",
+"When must we keep the Passover? Tell me the exact day.",
+"유월절은 언제 지켜야 하나요? 정확한 날짜를 말해 주세요."],
+["Q1","정답","제자(체험팀)","A1",
+"We must keep the Passover in the evening of the fourteenth day of the first month, by God's calendar. That is the exact day God has given us.",
+"우리는 성력 1월 14일 저녁에 유월절을 지켜야 합니다. 그날은 하나님이 우리에게 정해 주신 바로 그 날이에요."],
+["Q1","상황","예수님(진행자)",null,
+"That's right! The Passover is in the evening of the fourteenth day of the first month. Now, look — there is bread and wine in front of you.",
+"맞아요! 유월절은 1월 14일 저녁이에요. 자, 보세요 — 여러분 앞에 떡과 포도주가 있어요."],
+
+["Q2","질문","예수님(진행자)","Q2",
+"Do you know what this bread and wine mean?",
+"이 떡과 포도주가 무엇을 뜻하는지 아나요?"],
+["Q2","정답","제자(체험팀)","A2",
+"They mean the body and blood of Jesus. He gave His body and blood for us.",
+"예수님의 몸과 피를 뜻합니다. 예수님은 우리를 위해 그분의 몸과 피를 주셨어요."],
+["Q2","상황","예수님(진행자)",null,
+"That's right! This bread and wine are the body and blood of Jesus. We must eat and drink them to have life forever.",
+"맞아요! 이 떡과 포도주는 예수님의 몸과 피예요. 영원한 생명을 얻으려면 이것을 먹고 마셔야 해요."],
+["Q2","상황","예수님(진행자)",null,
+"Now, let's eat the bread and drink the wine together.",
+"이제 다 함께 떡을 먹고 포도주를 마셔 봅시다."],
+
+["Q3","질문","예수님(진행자)","Q3",
+"Now you have eaten the bread and had the wine together. When we keep the Passover like this, we get many blessings. What is one blessing about sin?",
+"이제 여러분은 떡을 먹고 포도주를 마셨어요. 이렇게 유월절을 지키면 많은 축복을 받아요. 죄와 관련된 축복은 무엇일까요?"],
+["Q3","정답","제자(체험팀)","A3",
+"We receive forgiveness of sin. All of our sins can be forgiven through the Passover.",
+"죄 사함을 받습니다. 유월절을 통해 우리의 모든 죄가 용서받을 수 있어요."],
+["Q3","상황","예수님(진행자)",null,
+"Very good! Through the Passover, we receive forgiveness of sin. God forgives us not because we are strong or wise, but because He is kind to us.",
+"아주 잘했어요! 유월절을 통해 죄 사함을 받아요. 하나님은 우리가 강하거나 똑똑해서가 아니라, 우리에게 자비로우시기 때문에 용서해 주세요."],
+
+["Q4","질문","예수님(진행자)","Q4",
+"Where can we go by keeping the Passover?",
+"유월절을 지키면 어디에 갈 수 있을까요?"],
+["Q4","정답","제자(체험팀)","A4",
+"We can go to the kingdom of heaven. It is the only way to enter heaven.",
+"우리는 천국에 갈 수 있습니다. 그것은 천국에 들어가는 유일한 길이에요."],
+["Q4","상황","예수님(진행자)",null,
+"Good job! No one can go to heaven without keeping the Passover. The Bible says there will be many disasters in the last days.",
+"잘했어요! 유월절을 지키지 않으면 아무도 천국에 갈 수 없어요. 성경은 마지막 때에 많은 재앙이 있을 것이라고 말합니다."],
+
+["Q5","질문","예수님(진행자)","Q5",
+"So, let me ask you — what is the only way to be safe from these disasters?",
+"그럼 물어볼게요 — 이 재앙에서 안전할 수 있는 유일한 방법은 무엇일까요?"],
+["Q5","정답","제자(체험팀)","A5",
+"We must keep the Passover to be safe from the disasters. God protects everyone who keeps the Passover.",
+"재앙에서 안전하려면 유월절을 지켜야 합니다. 하나님은 유월절을 지키는 모든 사람을 보호해 주세요."],
+["Q5","상황","예수님(진행자)",null,
+"Excellent! When we keep the Passover, God protects us. The Bible says, \"Their silver and gold cannot save them on the day of God's anger.\" The only way to be safe is the Passover.",
+"훌륭해요! 유월절을 지키면 하나님이 우리를 보호해 주세요. 성경은 이렇게 말해요, \"그들의 은과 금은 하나님의 진노의 날에 그들을 구하지 못한다.\" 안전할 수 있는 유일한 방법은 유월절이에요."],
+
+["마무리","상황","예수님(진행자)",null,
+"You have kept the Passover well today. Let's keep the Passover, stay safe from disasters, and tell this good news to many people!",
+"오늘 유월절을 잘 지켰어요. 유월절을 지켜서 재앙을 피하고, 많은 사람에게 이 기쁜 소식을 전합시다!"]
+];
+
+let i = 0;
+const revealed = new Set();
+let spinning = false;
+const picks = {};
+let seen = new Set();
+let lastPick = null;
+let teamSize = 3;
+
+function allNumbers(){ return Array.from({length: teamSize}, (_, k) => k + 1); }
+
+function resetPickState(){
+  Object.keys(picks).forEach(k => delete picks[k]);
+  seen = new Set();
+  lastPick = null;
+}
+
+function pickNumber(){
+  let pool = allNumbers().filter(n => seen.size < teamSize ? !seen.has(n) : true);
+  pool = pool.filter(n => n !== lastPick);
+  if(pool.length === 0) pool = allNumbers().filter(n => n !== lastPick);
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  seen.add(pick);
+  lastPick = pick;
+  return pick;
+}
+
+const badgeEl = document.getElementById('badge');
+const speakerEl = document.getElementById('speaker');
+const enEl = document.getElementById('enText');
+const krEl = document.getElementById('krText');
+const hintEl = document.getElementById('hint');
+const counterText = document.getElementById('counterText');
+const sceneText = document.getElementById('sceneText');
+const scenebarEl = document.getElementById('scenebar');
+const jumpEl = document.getElementById('jump');
+const listwrapEl = document.getElementById('listwrap');
+const stageEl = document.getElementById('stage');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const quizBtn = document.getElementById('quizBtn');
+const listToggle = document.getElementById('listToggle');
+const qrToggle = document.getElementById('qrToggle');
+const qrPanel = document.getElementById('qrPanel');
+const pickerEl = document.getElementById('picker');
+const pickerRow = document.getElementById('pickerRow');
+const pickBtn = document.getElementById('pickBtn');
+const pickHint = document.getElementById('pickHint');
+const chips = [...pickerRow.querySelectorAll('.num-chip')];
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sizeBtns = [...document.querySelectorAll('.sizebtn')];
+
+function buildScenebar(){
+  scenebarEl.innerHTML = '';
+  DATA.forEach((_, idx) => {
+    const d = document.createElement('div');
+    d.className = 'seg' + (idx < i ? ' done' : idx === i ? ' now' : '');
+    scenebarEl.appendChild(d);
+  });
+}
+
+function buildJump(){
+  const scenes = [...new Set(DATA.map(r => r[0]))];
+  jumpEl.innerHTML = '';
+  scenes.forEach(s => {
+    const b = document.createElement('button');
+    b.textContent = s;
+    b.addEventListener('click', () => {
+      i = DATA.findIndex(r => r[0] === s);
+      quizMode = false;
+      render();
+    });
+    jumpEl.appendChild(b);
+  });
+}
+
+function render(){
+  const [scene, kind, speaker, tag, en, kr] = DATA[i];
+  badgeEl.textContent = tag ? `${kind} · ${tag}` : kind;
+  badgeEl.className = 'badge ' + kind;
+  speakerEl.textContent = speaker;
+
+  const isAnswer = kind === '정답';
+  const isAction = kind === '지문';
+  const isHidden = isAnswer && !revealed.has(i);
+  enEl.textContent = en;
+  krEl.textContent = kr;
+  enEl.className = 'en' + (isHidden ? ' hidden' : '') + (isAction ? ' action' : '');
+  krEl.className = 'kr' + (isHidden ? ' hidden' : '') + (isAction ? ' action' : '');
+  hintEl.textContent = isHidden ? '탭하면 정답 공개' : '';
+
+  quizBtn.style.display = isAnswer ? '' : 'none';
+  quizBtn.textContent = isHidden ? '정답 보기' : '정답 다시 가리기';
+
+  counterText.textContent = `${i + 1} / ${DATA.length}`;
+  sceneText.textContent = scene;
+  prevBtn.disabled = i === 0;
+  nextBtn.textContent = i === DATA.length - 1 ? '처음으로 ↺' : '다음 →';
+
+  [...jumpEl.children].forEach(b => b.classList.toggle('active', b.textContent === scene));
+  buildScenebar();
+  renderPicker();
+}
+
+function renderPicker(){
+  const [, kind] = DATA[i];
+  const show = kind === '질문';
+  pickerEl.style.display = show ? 'flex' : 'none';
+  if(!show) return;
+  const picked = picks[i];
+  chips.forEach(c => {
+    const n = Number(c.dataset.n);
+    c.style.display = n <= teamSize ? 'flex' : 'none';
+    c.classList.toggle('active', picked === n);
+  });
+  pickBtn.textContent = picked ? '다시 뽑기' : '번호 뽑기';
+  pickHint.textContent = seen.size < teamSize
+    ? `아직 안 나온 번호: ${allNumbers().filter(n => !seen.has(n)).join(', ')} — 먼저 나와야 해요`
+    : `1~${teamSize}번 모두 나왔어요 (중복 가능, 연속만 제외)`;
+}
+
+pickBtn.addEventListener('click', () => {
+  if(spinning) return;
+  const finalPick = pickNumber();
+  if(reduceMotion){
+    picks[i] = finalPick;
+    renderPicker();
+    return;
+  }
+  spinning = true;
+  pickBtn.disabled = true;
+  let tick = 0;
+  const visibleChips = chips.filter(c => Number(c.dataset.n) <= teamSize);
+  const spin = setInterval(() => {
+    chips.forEach(c => c.classList.remove('active'));
+    visibleChips[tick % visibleChips.length].classList.add('active');
+    tick++;
+    if(tick > 9){
+      clearInterval(spin);
+      picks[i] = finalPick;
+      spinning = false;
+      pickBtn.disabled = false;
+      renderPicker();
+    }
+  }, 80);
+});
+
+enEl.addEventListener('click', () => { if(DATA[i][1] === '정답' && !revealed.has(i)){ revealed.add(i); render(); } });
+krEl.addEventListener('click', () => { if(DATA[i][1] === '정답' && !revealed.has(i)){ revealed.add(i); render(); } });
+
+prevBtn.addEventListener('click', () => { if(i > 0){ i--; render(); } });
+nextBtn.addEventListener('click', () => {
+  const wrapping = i === DATA.length - 1;
+  i = wrapping ? 0 : i + 1;
+  if(wrapping){
+    resetPickState();
+    revealed.clear();
+  }
+  render();
+});
+
+sizeBtns.forEach(b => b.addEventListener('click', () => {
+  const n = Number(b.dataset.size);
+  if(n === teamSize) return;
+  teamSize = n;
+  sizeBtns.forEach(x => x.classList.toggle('active', Number(x.dataset.size) === teamSize));
+  resetPickState();
+  render();
+}));
+quizBtn.addEventListener('click', () => {
+  if(revealed.has(i)) revealed.delete(i); else revealed.add(i);
+  render();
+});
+
+document.addEventListener('keydown', (e) => {
+  if(stageEl.classList.contains('list')) return;
+  if(e.key === 'ArrowRight') nextBtn.click();
+  if(e.key === 'ArrowLeft') prevBtn.click();
+});
+
+listToggle.addEventListener('click', () => {
+  const show = !stageEl.classList.contains('list');
+  stageEl.classList.toggle('list', show);
+  listwrapEl.classList.toggle('show', show);
+  listToggle.textContent = show ? '카드 모드로' : '전체 대본';
+  if(show && listwrapEl.children.length === 0){
+    DATA.forEach(([scene, kind, speaker, tag, en, kr], idx) => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <div class="meta">
+          <span class="badge ${kind}" style="font-size:11px;padding:3px 9px 3px 8px;">${tag ? kind+' · '+tag : kind}</span>
+          <span class="n">${String(idx+1).padStart(2,'0')} · ${scene} · ${speaker}</span>
+        </div>
+        <div class="en">${en.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</div>
+        <div class="kr">${kr}</div>`;
+      listwrapEl.appendChild(row);
+    });
+  }
+});
+
+qrToggle.addEventListener('click', () => {
+  const show = !qrPanel.classList.contains('show');
+  qrPanel.classList.toggle('show', show);
+  qrToggle.classList.toggle('active', show);
+});
+
+buildJump();
+render();
+</script>
