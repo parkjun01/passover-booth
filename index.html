@@ -1,5 +1,5 @@
 <title>유월절 부스 리허설 카드 (최종판)</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <style>
   :root{
     --bg:#f4f1ea; --bg2:#ffffff; --ink:#20202a; --sub:#6b6a63;
@@ -186,7 +186,7 @@
 
   <div class="qr-modal" id="qrModal">
     <div class="qr-modal-inner">
-      <img id="qrModalImg" src="" alt="QR Code" style="width:320px;height:320px;display:block;">
+      <div id="qrContainer"></div>
       <div class="qr-modal-url">https://passover-booth.vercel.app</div>
       <button class="qr-modal-close" id="qrModalClose">닫기</button>
     </div>
@@ -504,8 +504,12 @@ buildJump();
 render();
 
 const APP_URL = 'https://passover-booth.vercel.app';
-QRCode.toDataURL(APP_URL, { width: 320, margin: 1 }, function(err, url) {
-  if (!err) document.getElementById('qrModalImg').src = url;
+new QRCode(document.getElementById('qrContainer'), {
+  text: APP_URL,
+  width: 300,
+  height: 300,
+  colorDark: '#000000',
+  colorLight: '#ffffff',
 });
 
 document.getElementById('qrBox').addEventListener('click', () => {
