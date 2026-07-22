@@ -164,6 +164,11 @@
   .row .n{ font-size:11px; color:var(--sub); }
 
   footer{ text-align:center; font-size:11.5px; color:var(--sub); padding-top:4px; }
+  .host-only{ display:none; }
+  body.host .host-only{ display:revert; }
+  .mode-badge{ display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; margin-left:8px; vertical-align:middle; }
+  .mode-badge.host{ background:var(--gold-soft); color:var(--gold); }
+  .mode-badge.guest{ background:var(--slate-soft); color:var(--slate); }
 
   .num-display{ display:flex; justify-content:center; gap:24px; padding:12px 0 4px; }
   .num-item{ display:flex; flex-direction:column; align-items:center; gap:6px; }
@@ -179,6 +184,8 @@
 <div class="stage" id="stage">
   <div class="top">
     <h1 class="title">유월절 부스 리허설<small>예수님(진행자) → 제자(체험팀) · 5문항</small></h1>
+    <span class="mode-badge host" id="hostBadge" style="display:none">진행자</span>
+    <span class="mode-badge guest" id="guestBadge" style="display:none">참여자</span>
     <div class="topbtns">
       <button class="modebtn" id="qrToggle">QR 코드</button>
       <button class="modebtn" id="listToggle">전체 대본</button>
@@ -197,6 +204,14 @@
     </div>
   </div>
 
+  <div class="host-only" id="teamsizeWrap">
+    <div class="teamsize">
+      <span class="teamsize-label">체험팀 인원</span>
+      <button class="sizebtn" data-size="2">2명</button>
+      <button class="sizebtn active" data-size="3">3명</button>
+    </div>
+  </div>
+
   <div class="scenebar" id="scenebar"></div>
   <div class="counter"><span id="counterText"></span><span id="sceneText"></span></div>
 
@@ -210,11 +225,21 @@
       <div class="num-item" id="numItem3"><div class="num-badge-big">3</div><span class="num-pos">오른쪽</span></div>
     </div>
     <div class="hint" id="hint"></div>
+    <div class="picker host-only" id="picker">
+      <span class="picker-label">누가 답할까요?</span>
+      <div class="picker-row" id="pickerRow">
+        <span class="num-chip" data-n="1">1</span>
+        <span class="num-chip" data-n="2">2</span>
+        <span class="num-chip" data-n="3">3</span>
+      </div>
+      <button class="pickbtn" id="pickBtn">번호 뽑기</button>
+      <span class="pickhint" id="pickHint"></span>
+    </div>
   </div>
 
   <div class="nav">
     <button class="navbtn" id="prevBtn">← 이전</button>
-    <button class="navbtn" id="quizBtn">정답 가리기</button>
+    <button class="navbtn host-only" id="quizBtn">정답 가리기</button>
     <button class="navbtn primary" id="nextBtn">다음 →</button>
   </div>
 
@@ -222,7 +247,7 @@
 
   <div class="listwrap" id="listwrap"></div>
 
-  <footer>화살표 키로도 이동 · 정답 카드를 탭하면 정답을 확인할 수 있어요</footer>
+  <footer id="footer"></footer>
 </div>
 
 <script>
@@ -292,7 +317,32 @@ const DATA = [
 
 let i = 0;
 const revealed = new Set();
+const isHost = new URLSearchParams(location.search).has('host');
+if(isHost) document.body.classList.add('host');
+
+let spinning = false;
+const picks = {};
+let seen = new Set();
+let lastPick = null;
 let teamSize = 3;
+
+function allNumbers(){ return Array.from({length: teamSize}, (_, k) => k + 1); }
+
+function resetPickState(){
+  Object.keys(picks).forEach(k => delete picks[k]);
+  seen = new Set();
+  lastPick = null;
+}
+
+function pickNumber(){
+  let pool = allNumbers().filter(n => seen.size < teamSize ? !seen.has(n) : true);
+  pool = pool.filter(n => n !== lastPick);
+  if(pool.length === 0) pool = allNumbers().filter(n => n !== lastPick);
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  seen.add(pick);
+  lastPick = pick;
+  return pick;
+}
 
 const badgeEl = document.getElementById('badge');
 const speakerEl = document.getElementById('speaker');
@@ -311,7 +361,13 @@ const quizBtn = document.getElementById('quizBtn');
 const listToggle = document.getElementById('listToggle');
 const qrToggle = document.getElementById('qrToggle');
 const qrPanel = document.getElementById('qrPanel');
+const pickerEl = document.getElementById('picker');
+const pickerRow = document.getElementById('pickerRow');
+const pickBtn = document.getElementById('pickBtn');
+const pickHint = document.getElementById('pickHint');
+const chips = [...pickerRow.querySelectorAll('.num-chip')];
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sizeBtns = [...document.querySelectorAll('.sizebtn')];
 
 function buildScenebar(){
   scenebarEl.innerHTML = '';
@@ -366,7 +422,57 @@ function render(){
 
   [...jumpEl.children].forEach(b => b.classList.toggle('active', b.textContent === scene));
   buildScenebar();
+  renderPicker();
 }
+
+function renderPicker(){
+  if(!isHost) return;
+  const [, kind] = DATA[i];
+  const show = kind === '질문';
+  pickerEl.style.display = show ? 'flex' : 'none';
+  if(!show) return;
+  const picked = picks[i];
+  chips.forEach(c => {
+    const n = Number(c.dataset.n);
+    c.style.display = n <= teamSize ? 'flex' : 'none';
+    c.classList.toggle('active', picked === n);
+  });
+  pickBtn.textContent = picked ? '다시 뽑기' : '번호 뽑기';
+  pickHint.textContent = seen.size < teamSize
+    ? `아직 안 나온 번호: ${allNumbers().filter(n => !seen.has(n)).join(', ')}`
+    : `1~${teamSize}번 모두 나왔어요`;
+}
+
+pickBtn.addEventListener('click', () => {
+  if(spinning) return;
+  const finalPick = pickNumber();
+  if(reduceMotion){ picks[i] = finalPick; renderPicker(); return; }
+  spinning = true;
+  pickBtn.disabled = true;
+  let tick = 0;
+  const visibleChips = chips.filter(c => Number(c.dataset.n) <= teamSize);
+  const spin = setInterval(() => {
+    chips.forEach(c => c.classList.remove('active'));
+    visibleChips[tick % visibleChips.length].classList.add('active');
+    tick++;
+    if(tick > 9){
+      clearInterval(spin);
+      picks[i] = finalPick;
+      spinning = false;
+      pickBtn.disabled = false;
+      renderPicker();
+    }
+  }, 80);
+});
+
+sizeBtns.forEach(b => b.addEventListener('click', () => {
+  const n = Number(b.dataset.size);
+  if(n === teamSize) return;
+  teamSize = n;
+  sizeBtns.forEach(x => x.classList.toggle('active', Number(x.dataset.size) === teamSize));
+  resetPickState();
+  render();
+}));
 
 enEl.addEventListener('click', () => { if(DATA[i][1] === '정답' && !revealed.has(i)){ revealed.add(i); render(); } });
 krEl.addEventListener('click', () => { if(DATA[i][1] === '정답' && !revealed.has(i)){ revealed.add(i); render(); } });
@@ -375,7 +481,7 @@ prevBtn.addEventListener('click', () => { if(i > 0){ i--; render(); } });
 nextBtn.addEventListener('click', () => {
   const wrapping = i === DATA.length - 1;
   i = wrapping ? 0 : i + 1;
-  if(wrapping) revealed.clear();
+  if(wrapping){ resetPickState(); revealed.clear(); }
   render();
 });
 
@@ -417,6 +523,11 @@ qrToggle.addEventListener('click', () => {
 
 buildJump();
 render();
+
+document.getElementById(isHost ? 'hostBadge' : 'guestBadge').style.display = 'inline-block';
+document.getElementById('footer').textContent = isHost
+  ? '화살표 키로도 이동 · 질문 카드에서 번호 뽑기 가능'
+  : '화살표 키로도 이동 · 정답 카드를 탭하면 정답 확인 가능';
 
 const APP_URL = 'https://passover-booth.vercel.app';
 new QRCode(document.getElementById('qrContainer'), {
