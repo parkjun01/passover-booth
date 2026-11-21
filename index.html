@@ -1,547 +1,537 @@
-<title>유월절 부스 리허설 카드 (최종판)</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<style>
-  :root{
-    --bg:#f4f1ea; --bg2:#ffffff; --ink:#20202a; --sub:#6b6a63;
-    --line:rgba(32,32,42,.12);
-    --gold:#a97a1f; --gold-soft:#f2e2b8;
-    --wine:#7c2632; --wine-soft:#f3dadd;
-    --slate:#2f4858; --slate-soft:#dbe6ea;
-    --card-shadow: 0 1px 2px rgba(20,18,10,.06), 0 18px 40px -22px rgba(20,18,10,.35);
-    color-scheme: light;
-  }
-  @media (prefers-color-scheme: dark){
-    :root{
-      --bg:#14131c; --bg2:#1c1b28; --ink:#eeeadf; --sub:#a39d8c;
-      --line:rgba(238,234,223,.14);
-      --gold:#e0b355; --gold-soft:#3a3018;
-      --wine:#e08b93; --wine-soft:#3a2027;
-      --slate:#9fc2d6; --slate-soft:#20313c;
-      --card-shadow: 0 1px 2px rgba(0,0,0,.4), 0 24px 50px -20px rgba(0,0,0,.6);
-      color-scheme: dark;
-    }
-  }
-  :root[data-theme="dark"]{
-    --bg:#14131c; --bg2:#1c1b28; --ink:#eeeadf; --sub:#a39d8c;
-    --line:rgba(238,234,223,.14);
-    --gold:#e0b355; --gold-soft:#3a3018;
-    --wine:#e08b93; --wine-soft:#3a2027;
-    --slate:#9fc2d6; --slate-soft:#20313c;
-    --card-shadow: 0 1px 2px rgba(0,0,0,.4), 0 24px 50px -20px rgba(0,0,0,.6);
-    color-scheme: dark;
-  }
-  :root[data-theme="light"]{
-    --bg:#f4f1ea; --bg2:#ffffff; --ink:#20202a; --sub:#6b6a63;
-    --line:rgba(32,32,42,.12);
-    --gold:#a97a1f; --gold-soft:#f2e2b8;
-    --wine:#7c2632; --wine-soft:#f3dadd;
-    --slate:#2f4858; --slate-soft:#dbe6ea;
-    --card-shadow: 0 1px 2px rgba(20,18,10,.06), 0 18px 40px -22px rgba(20,18,10,.35);
-    color-scheme: light;
-  }
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인원 랜덤 추천기</title>
+    <!-- Tailwind CSS 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Noto Sans KR) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Tone.js (효과음 생성용) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- Canvas Confetti (축하 폭죽 효과) -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* 커스텀 스크롤바 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* 애니메이션 효과 */
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            70% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-indigo-50 via-white to-purple-50 text-slate-800">
 
-  *{box-sizing:border-box;}
-  body{
-    margin:0; min-height:100vh; background:var(--bg); color:var(--ink);
-    font-family: "Malgun Gothic","Apple SD Gothic Neo",-apple-system,"Segoe UI",sans-serif;
-    display:flex; justify-content:center; padding:28px 16px 48px;
-  }
-  .stage{ width:100%; max-width:640px; display:flex; flex-direction:column; gap:16px; }
-
-  .top{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
-  .title{
-    font-family:Georgia,"Iowan Old Style","Nanum Myeongjo",serif;
-    font-size:21px; letter-spacing:.01em; margin:0;
-  }
-  .title small{ display:block; font-family:inherit; font-size:12px; color:var(--sub); font-weight:400; margin-top:2px; letter-spacing:.04em;}
-  .topbtns{ display:flex; gap:8px; flex-shrink:0; }
-  .modebtn{
-    border:1px solid var(--line); background:var(--bg2); color:var(--ink);
-    border-radius:999px; padding:7px 13px; font-size:12.5px; cursor:pointer;
-  }
-  .modebtn:hover{ border-color:var(--gold); }
-  .modebtn.active{ border-color:var(--wine); color:var(--wine); }
-
-  .qrpanel{
-    display:none; flex-direction:column; align-items:center; gap:8px;
-    background:var(--bg2); border:1px solid var(--line); border-radius:16px;
-    padding:18px; box-shadow:var(--card-shadow);
-  }
-  .qrpanel.show{ display:flex; }
-  .qrbox{ background:#fff; padding:10px; border-radius:10px; cursor:zoom-in; }
-  .qrbox canvas{ display:block; }
-  .qr-modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:999; justify-content:center; align-items:center; }
-  .qr-modal.show{ display:flex; }
-  .qr-modal-inner{ background:#fff; padding:24px; border-radius:20px; display:flex; flex-direction:column; align-items:center; gap:12px; }
-  .qr-modal canvas{ display:block; }
-  .qr-modal-url{ font-size:12px; color:#555; word-break:break-all; text-align:center; max-width:320px; }
-  .qr-modal-close{ border:1px solid #ddd; background:#f5f5f5; border-radius:999px; padding:8px 20px; font-size:13px; cursor:pointer; }
-  .qrcaption{ font-size:12.5px; color:var(--sub); }
-  .qrurl{ font-size:11px; color:var(--sub); word-break:break-all; text-align:center; max-width:260px; }
-
-  .scenebar{ display:flex; gap:5px; }
-  .scenebar .seg{ flex:1; height:4px; border-radius:2px; background:var(--line); }
-  .scenebar .seg.done{ background:var(--gold); }
-  .scenebar .seg.now{ background:var(--wine); }
-
-  .counter{ display:flex; justify-content:space-between; font-size:12px; color:var(--sub); font-variant-numeric: tabular-nums; letter-spacing:.02em;}
-
-  .card{
-    background:var(--bg2); border:1px solid var(--line); border-radius:18px;
-    padding:26px 24px 22px; box-shadow:var(--card-shadow);
-    display:flex; flex-direction:column; gap:14px; min-height:260px;
-  }
-  .badgerow{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-  .badge{
-    display:inline-flex; align-items:center; gap:6px;
-    font-size:12px; font-weight:700; letter-spacing:.03em; padding:5px 11px 5px 9px;
-    border-radius:999px;
-  }
-  .badge.상황{ background:var(--gold-soft); color:var(--gold); }
-  .badge.질문{ background:var(--wine-soft); color:var(--wine); }
-  .badge.정답{ background:var(--slate-soft); color:var(--slate); }
-  .badge.지문{ background:var(--line); color:var(--sub); }
-  .badge::before{ content:""; width:6px; height:6px; border-radius:50%; background:currentColor; }
-  .speaker{ font-size:11.5px; color:var(--sub); font-weight:600; }
-  .scenetag{ font-size:12px; color:var(--sub); font-weight:600; }
-
-  .en{ font-family:Georgia,"Iowan Old Style",serif; font-size:18px; line-height:1.55; white-space:pre-line; }
-  .kr{ font-size:15.5px; line-height:1.65; color:var(--ink); white-space:pre-line; }
-  .en.action, .kr.action{ font-style:italic; color:var(--sub); text-align:center; }
-  .kr.hidden, .en.hidden{ filter: blur(7px); user-select:none; cursor:pointer; opacity:.7; }
-  .hint{ font-size:11.5px; color:var(--sub); }
-
-  .picker{ display:none; align-items:center; gap:12px; margin-top:2px; padding-top:14px; border-top:1px dashed var(--line); flex-wrap:wrap; }
-  .picker-label{ font-size:12.5px; color:var(--sub); font-weight:600; }
-  .picker-row{ display:flex; gap:8px; }
-  .num-chip{
-    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    border:1px solid var(--line); background:var(--bg); color:var(--sub); font-weight:700; font-size:15px;
-    font-variant-numeric: tabular-nums; transition: background .1s, color .1s, transform .1s;
-  }
-  .num-chip.active{ background:var(--wine); border-color:var(--wine); color:#fff; transform:scale(1.12); }
-  .pickbtn{
-    margin-left:auto; border:1px solid var(--gold); background:var(--gold-soft); color:var(--gold);
-    border-radius:999px; padding:7px 14px; font-size:12.5px; font-weight:700; cursor:pointer;
-  }
-  .pickbtn:hover{ filter:brightness(1.05); }
-  .pickhint{ flex-basis:100%; font-size:11px; color:var(--sub); }
-
-  .teamsize{ display:flex; align-items:center; gap:8px; }
-  .teamsize-label{ font-size:12px; color:var(--sub); font-weight:600; }
-  .sizebtn{
-    border:1px solid var(--line); background:var(--bg2); color:var(--sub);
-    border-radius:8px; padding:6px 12px; font-size:12.5px; cursor:pointer; font-weight:600;
-  }
-  .sizebtn.active{ border-color:var(--wine); color:var(--wine); background:var(--wine-soft); }
-  .sizebtn:hover{ border-color:var(--gold); }
-
-  .nav{ display:flex; align-items:center; gap:10px; }
-  .navbtn{
-    flex:1; padding:13px 14px; border-radius:12px; border:1px solid var(--line);
-    background:var(--bg2); color:var(--ink); font-size:14.5px; cursor:pointer; font-weight:600;
-  }
-  .navbtn.primary{ background:var(--wine); border-color:var(--wine); color:#fff; }
-  .navbtn:disabled{ opacity:.35; cursor:default; }
-  .navbtn:hover:not(:disabled){ border-color:var(--gold); }
-  .navbtn.primary:hover:not(:disabled){ filter:brightness(1.08); }
-
-  .jump{ display:flex; flex-wrap:wrap; gap:6px; }
-  .jump button{
-    border:1px solid var(--line); background:var(--bg2); color:var(--sub);
-    border-radius:8px; padding:6px 10px; font-size:12px; cursor:pointer;
-  }
-  .jump button.active{ border-color:var(--wine); color:var(--wine); font-weight:700; }
-  .jump button:hover{ border-color:var(--gold); color:var(--ink); }
-
-  .listwrap{ display:none; flex-direction:column; gap:10px; }
-  .listwrap.show{ display:flex; }
-  .stage.list .card, .stage.list .nav, .stage.list .scenebar, .stage.list .counter{ display:none; }
-  .row{ background:var(--bg2); border:1px solid var(--line); border-radius:12px; padding:14px 16px; display:flex; flex-direction:column; gap:6px; }
-  .row .en{ font-size:14.5px; }
-  .row .kr{ font-size:13.5px; color:var(--sub); }
-  .row .meta{ display:flex; gap:8px; align-items:center; }
-  .row .n{ font-size:11px; color:var(--sub); }
-
-  footer{ text-align:center; font-size:11.5px; color:var(--sub); padding-top:4px; }
-  .host-only{ display:none; }
-  body.host .host-only{ display:revert; }
-  .mode-badge{ display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; margin-left:8px; vertical-align:middle; }
-  .mode-badge.host{ background:var(--gold-soft); color:var(--gold); }
-  .mode-badge.guest{ background:var(--slate-soft); color:var(--slate); }
-
-  .num-display{ display:flex; justify-content:center; gap:24px; padding:12px 0 4px; }
-  .num-item{ display:flex; flex-direction:column; align-items:center; gap:6px; }
-  .num-badge-big{ width:52px; height:52px; border-radius:50%; background:var(--wine); color:#fff; font-size:22px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,.15); }
-  .num-pos{ font-size:11.5px; color:var(--sub); font-weight:600; }
-
-  @media (prefers-reduced-motion: no-preference){
-    .card{ animation: rise .25s ease; }
-    @keyframes rise{ from{ opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
-  }
-</style>
-
-<div class="stage" id="stage">
-  <div class="top">
-    <h1 class="title">유월절 부스 리허설<small>예수님(진행자) → 제자(체험팀) · 5문항</small></h1>
-    <span class="mode-badge host" id="hostBadge" style="display:none">진행자</span>
-    <span class="mode-badge guest" id="guestBadge" style="display:none">참여자</span>
-    <div class="topbtns">
-      <button class="modebtn" id="qrToggle">QR 코드</button>
-      <button class="modebtn" id="listToggle">전체 대본</button>
-    </div>
-  </div>
-
-  <div style="display:none">
-    <canvas id="qrCanvas"></canvas>
-  </div>
-
-  <div class="qr-modal" id="qrModal">
-    <div class="qr-modal-inner">
-      <div id="qrContainer"></div>
-      <div class="qr-modal-url">https://passover-booth.vercel.app</div>
-      <button class="qr-modal-close" id="qrModalClose">닫기</button>
-    </div>
-  </div>
-
-  <div class="host-only" id="teamsizeWrap">
-    <div class="teamsize">
-      <span class="teamsize-label">체험팀 인원</span>
-      <button class="sizebtn" data-size="2">2명</button>
-      <button class="sizebtn active" data-size="3">3명</button>
-    </div>
-  </div>
-
-  <div class="scenebar" id="scenebar"></div>
-  <div class="counter"><span id="counterText"></span><span id="sceneText"></span></div>
-
-  <div class="card" id="card">
-    <div class="badgerow"><span class="badge" id="badge"></span><span class="speaker" id="speaker"></span></div>
-    <div class="en" id="enText"></div>
-    <div class="kr" id="krText"></div>
-    <div class="num-display" id="numDisplay" style="display:none">
-      <div class="num-item"><div class="num-badge-big">1</div><span class="num-pos">왼쪽</span></div>
-      <div class="num-item"><div class="num-badge-big">2</div><span class="num-pos">가운데</span></div>
-      <div class="num-item" id="numItem3"><div class="num-badge-big">3</div><span class="num-pos">오른쪽</span></div>
-    </div>
-    <div class="hint" id="hint"></div>
-    <div class="picker host-only" id="picker">
-      <span class="picker-label">누가 답할까요?</span>
-      <div class="picker-row" id="pickerRow">
-        <span class="num-chip" data-n="1">1</span>
-        <span class="num-chip" data-n="2">2</span>
-        <span class="num-chip" data-n="3">3</span>
-      </div>
-      <button class="pickbtn" id="pickBtn">번호 뽑기</button>
-      <span class="pickhint" id="pickHint"></span>
-    </div>
-  </div>
-
-  <div class="nav">
-    <button class="navbtn" id="prevBtn">← 이전</button>
-    <button class="navbtn host-only" id="quizBtn">정답 가리기</button>
-    <button class="navbtn primary" id="nextBtn">다음 →</button>
-  </div>
-
-  <div class="jump" id="jump"></div>
-
-  <div class="listwrap" id="listwrap"></div>
-
-  <footer id="footer"></footer>
-</div>
-
-<script>
-// kind: 상황 | 질문 | 정답 / speaker: 예수님(진행자) | 제자(체험팀)
-const DATA = [
-["도입","상황","예수님(진행자)",null,
-"God bless you. Come and sit down, please. I am playing Jesus, and you are playing my disciples.\nFrom left to right, you are Number 1, Number 2, and Number 3.\nI will ask questions and randomly pick a number — that person must answer! If you answer well, you will get a stamp.",
-"복 많이 받으세요. 오셔서 앉아 주세요. 저는 예수님 역할을, 여러분은 제자 역할을 맡았어요.\n왼쪽부터 순서대로 1번, 2번, 3번이에요.\n제가 질문을 하면 번호를 랜덤으로 뽑을 거예요. 뽑힌 번호의 분이 답을 해주세요! 잘 대답하면 스탬프를 드릴게요."],
-
-["Q1","질문","예수님(진행자)","Q1",
-"Here comes the first question! When must we keep the Passover? Tell me the exact day.",
-"첫 번째 질문이에요! 유월절은 언제 지켜야 하나요? 정확한 날짜를 말해 주세요."],
-["Q1","정답","제자(체험팀)","A1",
-"We must keep the Passover in the evening of the fourteenth day of the first month of the Sacred Calendar. That is the exact day God has given us.",
-"우리는 성력 1월 14일 저녁에 유월절을 지켜야 합니다. 그날은 하나님이 우리에게 정해 주신 바로 그 날이에요."],
-["Q1","상황","예수님(진행자)",null,
-"That's right! The Passover is in the evening of the fourteenth day of the first month. Now, look — there is bread and wine in front of you.",
-"맞아요! 유월절은 1월 14일 저녁이에요. 자, 보세요 — 여러분 앞에 떡과 포도주가 있어요."],
-
-["Q2","질문","예수님(진행자)","Q2",
-"Do you know what this bread and wine mean?",
-"이 떡과 포도주가 무엇을 뜻하는지 아나요?"],
-["Q2","정답","제자(체험팀)","A2",
-"They mean the body and blood of Jesus. He gave His body and blood for us.",
-"예수님의 몸과 피를 뜻합니다. 예수님은 우리를 위해 그분의 몸과 피를 주셨어요."],
-["Q2","상황","예수님(진행자)",null,
-"That's right! This bread and wine are the body and blood of Jesus. We must eat and drink them to have life forever.",
-"맞아요! 이 떡과 포도주는 예수님의 몸과 피예요. 영원한 생명을 얻으려면 이것을 먹고 마셔야 해요."],
-["Q2","상황","예수님(진행자)",null,
-"Now, let's eat the bread and drink the wine together.",
-"이제 다 함께 떡을 먹고 포도주를 마셔 봅시다."],
-
-["Q3","질문","예수님(진행자)","Q3",
-"Now you have eaten the bread and had the wine together. When we keep the Passover like this, we get many blessings. What is one blessing about sin?",
-"이제 여러분은 떡을 먹고 포도주를 마셨어요. 이렇게 유월절을 지키면 많은 축복을 받아요. 죄와 관련된 축복은 무엇일까요?"],
-["Q3","정답","제자(체험팀)","A3",
-"We receive forgiveness of sin. All of our sins can be forgiven through the Passover.",
-"죄 사함을 받습니다. 유월절을 통해 우리의 모든 죄가 용서받을 수 있어요."],
-["Q3","상황","예수님(진행자)",null,
-"Very good! Through the Passover, we receive forgiveness of sin. God forgives us not because we are strong or wise, but because He is kind to us.",
-"아주 잘했어요! 유월절을 통해 죄 사함을 받아요. 하나님은 우리가 강하거나 똑똑해서가 아니라, 우리에게 자비로우시기 때문에 용서해 주세요."],
-
-["Q4","질문","예수님(진행자)","Q4",
-"Where can we go by keeping the Passover?",
-"유월절을 지키면 어디에 갈 수 있을까요?"],
-["Q4","정답","제자(체험팀)","A4",
-"We can go to the kingdom of heaven. It is the only way to enter heaven.",
-"우리는 천국에 갈 수 있습니다. 그것은 천국에 들어가는 유일한 길이에요."],
-["Q4","상황","예수님(진행자)",null,
-"Good job! No one can go to heaven without keeping the Passover. The Bible says there will be many disasters in the last days.",
-"잘했어요! 유월절을 지키지 않으면 아무도 천국에 갈 수 없어요. 성경은 마지막 때에 많은 재앙이 있을 것이라고 말합니다."],
-
-["Q5","질문","예수님(진행자)","Q5",
-"So, let me ask you — what is the only way to be safe from these disasters?",
-"그럼 물어볼게요 — 이 재앙에서 안전할 수 있는 유일한 방법은 무엇일까요?"],
-["Q5","정답","제자(체험팀)","A5",
-"We must keep the Passover to be safe from the disasters. God protects everyone who keeps the Passover.",
-"재앙에서 안전하려면 유월절을 지켜야 합니다. 하나님은 유월절을 지키는 모든 사람을 보호해 주세요."],
-["Q5","상황","예수님(진행자)",null,
-"Excellent! When we keep the Passover, God protects us. The Bible says, \"Their silver and gold cannot save them on the day of God's anger.\" The only way to be safe is the Passover.",
-"훌륭해요! 유월절을 지키면 하나님이 우리를 보호해 주세요. 성경은 이렇게 말해요, \"그들의 은과 금은 하나님의 진노의 날에 그들을 구하지 못한다.\" 안전할 수 있는 유일한 방법은 유월절이에요."],
-
-["마무리","상황","예수님(진행자)",null,
-"You have kept the Passover well today. Let's keep the Passover, stay safe from disasters, and tell this good news to many people!",
-"오늘 유월절을 잘 지켰어요. 유월절을 지켜서 재앙을 피하고, 많은 사람에게 이 기쁜 소식을 전합시다!"]
-];
-
-let i = 0;
-const revealed = new Set();
-const isHost = new URLSearchParams(location.search).has('host');
-if(isHost) document.body.classList.add('host');
-
-let spinning = false;
-const picks = {};
-let seen = new Set();
-let lastPick = null;
-let teamSize = 3;
-
-function allNumbers(){ return Array.from({length: teamSize}, (_, k) => k + 1); }
-
-function resetPickState(){
-  Object.keys(picks).forEach(k => delete picks[k]);
-  seen = new Set();
-  lastPick = null;
-}
-
-function pickNumber(){
-  let pool = allNumbers().filter(n => seen.size < teamSize ? !seen.has(n) : true);
-  pool = pool.filter(n => n !== lastPick);
-  if(pool.length === 0) pool = allNumbers().filter(n => n !== lastPick);
-  const pick = pool[Math.floor(Math.random() * pool.length)];
-  seen.add(pick);
-  lastPick = pick;
-  return pick;
-}
-
-const badgeEl = document.getElementById('badge');
-const speakerEl = document.getElementById('speaker');
-const enEl = document.getElementById('enText');
-const krEl = document.getElementById('krText');
-const hintEl = document.getElementById('hint');
-const counterText = document.getElementById('counterText');
-const sceneText = document.getElementById('sceneText');
-const scenebarEl = document.getElementById('scenebar');
-const jumpEl = document.getElementById('jump');
-const listwrapEl = document.getElementById('listwrap');
-const stageEl = document.getElementById('stage');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const quizBtn = document.getElementById('quizBtn');
-const listToggle = document.getElementById('listToggle');
-const qrToggle = document.getElementById('qrToggle');
-const qrPanel = document.getElementById('qrPanel');
-const pickerEl = document.getElementById('picker');
-const pickerRow = document.getElementById('pickerRow');
-const pickBtn = document.getElementById('pickBtn');
-const pickHint = document.getElementById('pickHint');
-const chips = [...pickerRow.querySelectorAll('.num-chip')];
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const sizeBtns = [...document.querySelectorAll('.sizebtn')];
-
-function buildScenebar(){
-  scenebarEl.innerHTML = '';
-  DATA.forEach((_, idx) => {
-    const d = document.createElement('div');
-    d.className = 'seg' + (idx < i ? ' done' : idx === i ? ' now' : '');
-    scenebarEl.appendChild(d);
-  });
-}
-
-function buildJump(){
-  const scenes = [...new Set(DATA.map(r => r[0]))];
-  jumpEl.innerHTML = '';
-  scenes.forEach(s => {
-    const b = document.createElement('button');
-    b.textContent = s;
-    b.addEventListener('click', () => {
-      i = DATA.findIndex(r => r[0] === s);
-      quizMode = false;
-      render();
-    });
-    jumpEl.appendChild(b);
-  });
-}
-
-function render(){
-  const [scene, kind, speaker, tag, en, kr] = DATA[i];
-  badgeEl.textContent = tag ? `${kind} · ${tag}` : kind;
-  badgeEl.className = 'badge ' + kind;
-  speakerEl.textContent = speaker;
-
-  const isAnswer = kind === '정답';
-  const isAction = kind === '지문';
-  const isHidden = isAnswer && !revealed.has(i);
-  enEl.textContent = en;
-  krEl.textContent = kr;
-  enEl.className = 'en' + (isHidden ? ' hidden' : '') + (isAction ? ' action' : '');
-  krEl.className = 'kr' + (isHidden ? ' hidden' : '') + (isAction ? ' action' : '');
-  hintEl.textContent = isHidden ? '탭하면 정답 공개' : '';
-
-  quizBtn.style.display = isAnswer ? '' : 'none';
-  quizBtn.textContent = isHidden ? '정답 보기' : '정답 다시 가리기';
-
-  const numDisplay = document.getElementById('numDisplay');
-  numDisplay.style.display = (i === 0) ? 'flex' : 'none';
-  document.getElementById('numItem3').style.display = teamSize >= 3 ? 'flex' : 'none';
-
-  counterText.textContent = `${i + 1} / ${DATA.length}`;
-  sceneText.textContent = scene;
-  prevBtn.disabled = i === 0;
-  nextBtn.textContent = i === DATA.length - 1 ? '처음으로 ↺' : '다음 →';
-
-  [...jumpEl.children].forEach(b => b.classList.toggle('active', b.textContent === scene));
-  buildScenebar();
-  renderPicker();
-}
-
-function renderPicker(){
-  if(!isHost) return;
-  const [, kind] = DATA[i];
-  const show = kind === '질문';
-  pickerEl.style.display = show ? 'flex' : 'none';
-  if(!show) return;
-  const picked = picks[i];
-  chips.forEach(c => {
-    const n = Number(c.dataset.n);
-    c.style.display = n <= teamSize ? 'flex' : 'none';
-    c.classList.toggle('active', picked === n);
-  });
-  pickBtn.textContent = picked ? '다시 뽑기' : '번호 뽑기';
-  pickHint.textContent = seen.size < teamSize
-    ? `아직 안 나온 번호: ${allNumbers().filter(n => !seen.has(n)).join(', ')}`
-    : `1~${teamSize}번 모두 나왔어요`;
-}
-
-pickBtn.addEventListener('click', () => {
-  if(spinning) return;
-  const finalPick = pickNumber();
-  if(reduceMotion){ picks[i] = finalPick; renderPicker(); return; }
-  spinning = true;
-  pickBtn.disabled = true;
-  let tick = 0;
-  const visibleChips = chips.filter(c => Number(c.dataset.n) <= teamSize);
-  const spin = setInterval(() => {
-    chips.forEach(c => c.classList.remove('active'));
-    visibleChips[tick % visibleChips.length].classList.add('active');
-    tick++;
-    if(tick > 9){
-      clearInterval(spin);
-      picks[i] = finalPick;
-      spinning = false;
-      pickBtn.disabled = false;
-      renderPicker();
-    }
-  }, 80);
-});
-
-sizeBtns.forEach(b => b.addEventListener('click', () => {
-  const n = Number(b.dataset.size);
-  if(n === teamSize) return;
-  teamSize = n;
-  sizeBtns.forEach(x => x.classList.toggle('active', Number(x.dataset.size) === teamSize));
-  resetPickState();
-  render();
-}));
-
-enEl.addEventListener('click', () => { if(DATA[i][1] === '정답' && !revealed.has(i)){ revealed.add(i); render(); } });
-krEl.addEventListener('click', () => { if(DATA[i][1] === '정답' && !revealed.has(i)){ revealed.add(i); render(); } });
-
-prevBtn.addEventListener('click', () => { if(i > 0){ i--; render(); } });
-nextBtn.addEventListener('click', () => {
-  const wrapping = i === DATA.length - 1;
-  i = wrapping ? 0 : i + 1;
-  if(wrapping){ resetPickState(); revealed.clear(); }
-  render();
-});
-
-quizBtn.addEventListener('click', () => {
-  if(revealed.has(i)) revealed.delete(i); else revealed.add(i);
-  render();
-});
-
-document.addEventListener('keydown', (e) => {
-  if(stageEl.classList.contains('list')) return;
-  if(e.key === 'ArrowRight') nextBtn.click();
-  if(e.key === 'ArrowLeft') prevBtn.click();
-});
-
-listToggle.addEventListener('click', () => {
-  const show = !stageEl.classList.contains('list');
-  stageEl.classList.toggle('list', show);
-  listwrapEl.classList.toggle('show', show);
-  listToggle.textContent = show ? '카드 모드로' : '전체 대본';
-  if(show && listwrapEl.children.length === 0){
-    DATA.forEach(([scene, kind, speaker, tag, en, kr], idx) => {
-      const row = document.createElement('div');
-      row.className = 'row';
-      row.innerHTML = `
-        <div class="meta">
-          <span class="badge ${kind}" style="font-size:11px;padding:3px 9px 3px 8px;">${tag ? kind+' · '+tag : kind}</span>
-          <span class="n">${String(idx+1).padStart(2,'0')} · ${scene} · ${speaker}</span>
+    <!-- 메인 컨테이너 -->
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden transition-all">
+        
+        <!-- 헤더 -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white text-center relative">
+            <h1 class="text-2xl font-black tracking-tight flex items-center justify-center gap-2">
+                <span>🎲</span> 스마트 인원 추천기
+            </h1>
+            <p class="text-indigo-100 text-sm mt-1">이름을 넣고 원하는 인원만큼 공정하게 뽑아보세요!</p>
+            
+            <!-- 사운드 토글 버튼 -->
+            <button id="soundToggle" class="absolute top-4 right-4 p-2 rounded-full bg-white/20 hover:bg-white/30 transition text-white" title="효과음 켜기/끄기">
+                <svg id="soundOnIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd" />
+                </svg>
+                <svg id="soundOffIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </button>
         </div>
-        <div class="en">${en.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</div>
-        <div class="kr">${kr}</div>`;
-      listwrapEl.appendChild(row);
-    });
-  }
-});
 
-qrToggle.addEventListener('click', () => {
-  document.getElementById('qrModal').classList.add('show');
-});
+        <!-- 본문 영역 -->
+        <div class="p-6 space-y-6">
+            
+            <!-- 1. 이름 입력 섹션 -->
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <label for="nameInput" class="text-sm font-bold text-slate-700">참여자 추가</label>
+                    <button id="bulkToggleBtn" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium underline">
+                        여러 명 한꺼번에 붙여넣기
+                    </button>
+                </div>
 
-buildJump();
-render();
+                <!-- 단일 입력 폼 -->
+                <div id="singleInputBox" class="flex gap-2">
+                    <input type="text" id="nameInput" placeholder="이름 입력 후 엔터 (예: 홍길동)" 
+                        class="flex-1 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition text-sm">
+                    <button id="addBtn" class="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl transition shadow-sm text-sm whitespace-nowrap">
+                        추가
+                    </button>
+                </div>
 
-document.getElementById(isHost ? 'hostBadge' : 'guestBadge').style.display = 'inline-block';
-document.getElementById('footer').textContent = isHost
-  ? '화살표 키로도 이동 · 질문 카드에서 번호 뽑기 가능'
-  : '화살표 키로도 이동 · 정답 카드를 탭하면 정답 확인 가능';
+                <!-- 다중 입력 폼 (기본 숨김) -->
+                <div id="bulkInputBox" class="hidden space-y-2">
+                    <textarea id="bulkTextarea" rows="3" placeholder="쉼표(,)나 줄바꿈으로 구분해서 여러 명을 입력하세요.&#10;예: 김철수, 이영희, 박민수" 
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"></textarea>
+                    <div class="flex justify-end gap-2">
+                        <button id="cancelBulkBtn" class="px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-100 rounded-lg">취소</button>
+                        <button id="addBulkBtn" class="px-4 py-1.5 text-xs font-bold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">일괄 추가하기</button>
+                    </div>
+                </div>
+            </div>
 
-const APP_URL = 'https://passover-booth.vercel.app';
-new QRCode(document.getElementById('qrContainer'), {
-  text: APP_URL,
-  width: 300,
-  height: 300,
-  colorDark: '#000000',
-  colorLight: '#ffffff',
-});
+            <!-- 2. 참여자 명단 표시 영역 -->
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        대기 명단 (<span id="totalCount" class="text-indigo-600 font-extrabold">0</span>명)
+                    </span>
+                    <button id="clearAllBtn" class="text-xs text-rose-500 hover:text-rose-700 font-medium hidden">
+                        전체 삭제
+                    </button>
+                </div>
+                
+                <!-- 이름 태그 목록 -->
+                <div id="nameList" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto pr-1">
+                    <p id="emptyMsg" class="text-sm text-slate-400 w-full text-center py-4">
+                        아직 추가된 사람이 없습니다.<br>위에서 이름을 추가해주세요!
+                    </p>
+                </div>
+            </div>
 
-document.getElementById('qrModalClose').addEventListener('click', () => {
-  document.getElementById('qrModal').classList.remove('show');
-});
-document.getElementById('qrModal').addEventListener('click', (e) => {
-  if(e.target === e.currentTarget) e.currentTarget.classList.remove('show');
-});
-</script>
+            <!-- 3. 추천 인원 설정 섹션 -->
+            <div class="flex items-center justify-between bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100">
+                <div>
+                    <span class="block text-sm font-bold text-slate-800">추천받을 인원 수</span>
+                    <span class="text-xs text-slate-500">몇 명을 뽑을까요?</span>
+                </div>
+                <div class="flex items-center gap-3 bg-white px-3 py-1.5 rounded-xl border border-indigo-100 shadow-sm">
+                    <button id="decreaseCount" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold active:scale-90 transition">-</button>
+                    <span id="pickCountDisplay" class="w-8 text-center font-black text-lg text-indigo-600">1</span>
+                    <button id="increaseCount" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold active:scale-90 transition">+</button>
+                </div>
+            </div>
+
+            <!-- 4. 추첨 실행 버튼 -->
+            <button id="pickBtn" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 active:scale-[0.98] text-white font-black text-lg rounded-2xl shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2">
+                <span>✨</span> 추천 인원 뽑기
+            </button>
+
+            <!-- 5. 결과 출력 섹션 (초기 숨김) -->
+            <div id="resultSection" class="hidden pt-4 border-t border-slate-100">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-sm font-bold text-slate-700 flex items-center gap-1.5">
+                        <span>🎉</span> 최종 추천 결과
+                    </h2>
+                    <button id="copyResultBtn" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1">
+                        <span>📋</span> 결과 복사
+                    </button>
+                </div>
+                
+                <!-- 결과 카드 리스트 -->
+                <div id="resultList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <!-- 자바스크립트로 동적 생성 -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 커스텀 토스트 알림창 (alert 대체용) -->
+    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-5 py-3 rounded-full text-sm font-medium shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50 whitespace-nowrap">
+        메시지 내용
+    </div>
+
+    <script>
+        // 상태 관리 변수
+        let participants = [];
+        let pickCount = 1;
+        let isSoundEnabled = true;
+        let isPicking = false;
+
+        // DOM 요소 참조
+        const nameInput = document.getElementById('nameInput');
+        const addBtn = document.getElementById('addBtn');
+        const bulkToggleBtn = document.getElementById('bulkToggleBtn');
+        const singleInputBox = document.getElementById('singleInputBox');
+        const bulkInputBox = document.getElementById('bulkInputBox');
+        const bulkTextarea = document.getElementById('bulkTextarea');
+        const addBulkBtn = document.getElementById('addBulkBtn');
+        const cancelBulkBtn = document.getElementById('cancelBulkBtn');
+        
+        const nameList = document.getElementById('nameList');
+        const emptyMsg = document.getElementById('emptyMsg');
+        const totalCount = document.getElementById('totalCount');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        
+        const decreaseCount = document.getElementById('decreaseCount');
+        const increaseCount = document.getElementById('increaseCount');
+        const pickCountDisplay = document.getElementById('pickCountDisplay');
+        
+        const pickBtn = document.getElementById('pickBtn');
+        const resultSection = document.getElementById('resultSection');
+        const resultList = document.getElementById('resultList');
+        const copyResultBtn = document.getElementById('copyResultBtn');
+        
+        const soundToggle = document.getElementById('soundToggle');
+        const soundOnIcon = document.getElementById('soundOnIcon');
+        const soundOffIcon = document.getElementById('soundOffIcon');
+        const toast = document.getElementById('toast');
+
+        // Tone.js 신디사이저 설정 (효과음)
+        let synth = null;
+        function initAudio() {
+            if (!synth && window.Tone) {
+                synth = new Tone.PolySynth(Tone.Synth).toDestination();
+                synth.volume.value = -8;
+            }
+        }
+
+        function playTickSound() {
+            if (!isSoundEnabled) return;
+            initAudio();
+            if (synth) {
+                synth.triggerAttackRelease("C5", "32n");
+            }
+        }
+
+        function playWinSound() {
+            if (!isSoundEnabled) return;
+            initAudio();
+            if (synth) {
+                const now = Tone.now();
+                synth.triggerAttackRelease(["C5", "E5", "G5"], "8n", now);
+                synth.triggerAttackRelease(["C5", "E5", "G5", "C6"], "4n", now + 0.15);
+            }
+        }
+
+        // 토스트 알림 표시 함수
+        let toastTimeout;
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.remove('opacity-0');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, 2500);
+        }
+
+        // 참여자 목록 UI 렌더링
+        function renderParticipants() {
+            totalCount.textContent = participants.length;
+            
+            if (participants.length === 0) {
+                nameList.innerHTML = '';
+                nameList.appendChild(emptyMsg);
+                emptyMsg.classList.remove('hidden');
+                clearAllBtn.classList.add('hidden');
+            } else {
+                emptyMsg.classList.add('hidden');
+                clearAllBtn.classList.remove('hidden');
+                nameList.innerHTML = '';
+
+                participants.forEach((name, index) => {
+                    const badge = document.createElement('div');
+                    badge.className = 'inline-flex items-center gap-1.5 bg-white border border-slate-200 px-3 py-1.5 rounded-full text-sm font-medium text-slate-700 shadow-sm animate-pop';
+                    badge.innerHTML = `
+                        <span>${escapeHTML(name)}</span>
+                        <button onclick="removeParticipant(${index})" class="text-slate-400 hover:text-rose-500 focus:outline-none transition ml-0.5" title="삭제">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    `;
+                    nameList.appendChild(badge);
+                });
+            }
+
+            // 추천 인원수가 전체 인원수보다 크면 자동 조정
+            if (participants.length > 0 && pickCount > participants.length) {
+                pickCount = participants.length;
+                pickCountDisplay.textContent = pickCount;
+            }
+        }
+
+        // XSS 방지용 이스케이프 함수
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag])
+            );
+        }
+
+        // 단일 이름 추가
+        function addParticipant() {
+            const name = nameInput.value.trim();
+            if (!name) {
+                showToast('이름을 입력해주세요!');
+                nameInput.focus();
+                return;
+            }
+            if (participants.includes(name)) {
+                showToast('이미 명단에 있는 이름입니다.');
+                nameInput.select();
+                return;
+            }
+            participants.push(name);
+            nameInput.value = '';
+            nameInput.focus();
+            renderParticipants();
+        }
+
+        // 다중 이름 일괄 추가
+        function addBulkParticipants() {
+            const rawText = bulkTextarea.value.trim();
+            if (!rawText) {
+                showToast('추가할 이름을 입력해주세요!');
+                return;
+            }
+            // 쉼표, 줄바꿈, 탭 등으로 분리
+            const names = rawText.split(/[\n,\t]+/).map(n => n.trim()).filter(n => n.length > 0);
+            let addedCount = 0;
+            let duplicateCount = 0;
+
+            names.forEach(name => {
+                if (!participants.includes(name)) {
+                    participants.push(name);
+                    addedCount++;
+                } else {
+                    duplicateCount++;
+                }
+            });
+
+            bulkTextarea.value = '';
+            toggleBulkMode(false);
+            renderParticipants();
+
+            if (addedCount > 0) {
+                showToast(`${addedCount}명이 추가되었습니다.` + (duplicateCount > 0 ? ` (중복 ${duplicateCount}명 제외)` : ''));
+            } else if (duplicateCount > 0) {
+                showToast('입력한 이름이 모두 이미 명단에 있습니다.');
+            }
+        }
+
+        // 개별 삭제
+        window.removeParticipant = function(index) {
+            if (isPicking) return;
+            participants.splice(index, 1);
+            renderParticipants();
+        };
+
+        // 일괄 입력 모드 토글
+        function toggleBulkMode(showBulk) {
+            if (showBulk) {
+                singleInputBox.classList.add('hidden');
+                bulkInputBox.classList.remove('hidden');
+                bulkToggleBtn.textContent = '한 명씩 입력하기';
+                bulkTextarea.focus();
+            } else {
+                bulkInputBox.classList.add('hidden');
+                singleInputBox.classList.remove('hidden');
+                bulkToggleBtn.textContent = '여러 명 한꺼번에 붙여넣기';
+                nameInput.focus();
+            }
+        }
+
+        // 피셔-예이츠(Fisher-Yates) 셔플 알고리즘 (공정한 무작위 추출)
+        function getRandomSample(arr, count) {
+            const shuffled = [...arr];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled.slice(0, count);
+        }
+
+        // 추첨 실행 애니메이션 및 로직
+        function startPicking() {
+            if (isPicking) return;
+
+            if (participants.length === 0) {
+                showToast('먼저 참여자 이름을 추가해주세요!');
+                nameInput.focus();
+                return;
+            }
+
+            if (pickCount > participants.length) {
+                showToast(`참여자 수(${participants.length}명)보다 많은 인원을 뽑을 수 없습니다.`);
+                return;
+            }
+
+            isPicking = true;
+            pickBtn.disabled = true;
+            pickBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            pickBtn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> 추천 인원 선발 중...`;
+
+            resultSection.classList.remove('hidden');
+            
+            // 슬롯머신처럼 빠르게 이름이 바뀌는 연출 (1.2초 동안)
+            let shuffleSteps = 15;
+            let currentStep = 0;
+
+            const interval = setInterval(() => {
+                const tempSample = getRandomSample(participants, pickCount);
+                renderResults(tempSample, false);
+                playTickSound();
+                currentStep++;
+
+                if (currentStep >= shuffleSteps) {
+                    clearInterval(interval);
+                    // 최종 당첨자 결정
+                    const finalWinners = getRandomSample(participants, pickCount);
+                    renderResults(finalWinners, true);
+                    playWinSound();
+                    
+                    // 폭죽 효과 실행
+                    if (window.confetti) {
+                        confetti({
+                            particleCount: 80,
+                            spread: 70,
+                            origin: { y: 0.6 }
+                        });
+                    }
+
+                    // 버튼 상태 복구
+                    isPicking = false;
+                    pickBtn.disabled = false;
+                    pickBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                    pickBtn.innerHTML = `<span>🔄</span> 다시 추천받기`;
+                }
+            }, 80);
+        }
+
+        // 결과 카드 렌더링
+        function renderResults(winners, isFinal) {
+            resultList.innerHTML = '';
+            winners.forEach((name, idx) => {
+                const card = document.createElement('div');
+                if (isFinal) {
+                    card.className = 'flex items-center gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md animate-pop';
+                    card.style.animationDelay = `${idx * 0.08}s`;
+                    card.innerHTML = `
+                        <span class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center font-black text-sm shrink-0">
+                            ${idx + 1}
+                        </span>
+                        <span class="font-bold text-base truncate">${escapeHTML(name)}</span>
+                    `;
+                } else {
+                    card.className = 'flex items-center gap-3 p-3.5 rounded-2xl bg-slate-100 text-slate-500 border border-slate-200';
+                    card.innerHTML = `
+                        <span class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center font-bold text-sm shrink-0">
+                            ?
+                        </span>
+                        <span class="font-medium text-base truncate">${escapeHTML(name)}</span>
+                    `;
+                }
+                resultList.appendChild(card);
+            });
+        }
+
+        // 이벤트 리스너 등록
+        addBtn.addEventListener('click', addParticipant);
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addParticipant();
+        });
+
+        bulkToggleBtn.addEventListener('click', () => {
+            const isHidden = bulkInputBox.classList.contains('hidden');
+            toggleBulkMode(isHidden);
+        });
+        cancelBulkBtn.addEventListener('click', () => toggleBulkMode(false));
+        addBulkBtn.addEventListener('click', addBulkParticipants);
+
+        clearAllBtn.addEventListener('click', () => {
+            if (isPicking) return;
+            participants = [];
+            pickCount = 1;
+            pickCountDisplay.textContent = pickCount;
+            resultSection.classList.add('hidden');
+            renderParticipants();
+            showToast('명단이 초기화되었습니다.');
+        });
+
+        decreaseCount.addEventListener('click', () => {
+            if (pickCount > 1) {
+                pickCount--;
+                pickCountDisplay.textContent = pickCount;
+            }
+        });
+
+        increaseCount.addEventListener('click', () => {
+            const maxAllowed = participants.length > 0 ? participants.length : 99;
+            if (pickCount < maxAllowed) {
+                pickCount++;
+                pickCountDisplay.textContent = pickCount;
+            } else if (participants.length > 0) {
+                showToast(`최대 ${participants.length}명까지 선택할 수 있습니다.`);
+            }
+        });
+
+        pickBtn.addEventListener('click', startPicking);
+
+        // 결과 복사 기능 (iframe 호환 execCommand 사용)
+        copyResultBtn.addEventListener('click', () => {
+            const winnerElements = resultList.querySelectorAll('span.truncate');
+            if (winnerElements.length === 0) return;
+
+            const names = Array.from(winnerElements).map((el, i) => `${i + 1}. ${el.textContent}`).join('\n');
+            const copyText = `[🎉 인원 추천 결과]\n${names}`;
+
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = copyText;
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            try {
+                document.execCommand('copy');
+                showToast('추천 결과가 클립보드에 복사되었습니다!');
+            } catch (err) {
+                showToast('복사에 실패했습니다.');
+            }
+            document.body.removeChild(tempTextarea);
+        });
+
+        // 효과음 켜기/끄기
+        soundToggle.addEventListener('click', () => {
+            isSoundEnabled = !isSoundEnabled;
+            if (isSoundEnabled) {
+                soundOnIcon.classList.remove('hidden');
+                soundOffIcon.classList.add('hidden');
+                showToast('효과음이 켜졌습니다.');
+            } else {
+                soundOnIcon.classList.add('hidden');
+                soundOffIcon.classList.remove('hidden');
+                showToast('효과음이 꺼졌습니다.');
+            }
+        });
+
+        // 초기 렌더링
+        renderParticipants();
+    </script>
+</body>
+</html>
+```
